@@ -20,13 +20,17 @@ function App() {
   const [genres, setGenres] = useState([]);
   const [genre, setGenre] = useState("");
   const [sort, setSort] = useState("popularity.desc");
-  const [year, setYear] = useState("");
+  const [year, setYear] = useState({ min: "", max: "" });
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [mediaType, setMediaType] = useState("movie");
   const [language, setLanguage] = useState("");
   const [imdbScore, setImdbScore] = useState(5);
+
+  const handleYearChange = (key, value) => {
+    setYear((prevYear) => ({ ...prevYear, [key]: value }));
+  };
 
   const handleImdbScoreChange = (score) => {
     setImdbScore(score);
@@ -47,19 +51,19 @@ function App() {
         }`;
         if (sort) nextPageUrl += `&sort_by=${sort}`;
         if (genre) nextPageUrl += `&with_genres=${genre}`;
-        if (year) nextPageUrl += `&primary_release_year=${year}`;
+        // تغییرات برای بازه سال
+        if (year.min)
+          nextPageUrl += `&primary_release_date.gte=${year.min}-01-01`;
+        if (year.max)
+          nextPageUrl += `&primary_release_date.lte=${year.max}-12-31`;
+        // ...
         if (language) nextPageUrl += `&with_original_language=${language}`;
       }
 
       const newMovies = await getMovies(nextPageUrl);
-      // نمایش مقدار imdbScore در کنسول
-      console.log("IMDb Score from Filter:", imdbScore);
       const filteredNewMovies = newMovies.filter((movie) => {
         if (imdbScore > 0) {
-          return (
-            movie.vote_average >= imdbScore - 0.5 &&
-            movie.vote_average <= imdbScore + 0.5
-          );
+          return movie.vote_average >= imdbScore;
         }
         return true;
       });
@@ -96,7 +100,10 @@ function App() {
         finalUrl = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${API_KEY}`;
         if (sort) finalUrl += `&sort_by=${sort}`;
         if (genre) finalUrl += `&with_genres=${genre}`;
-        if (year) finalUrl += `&primary_release_year=${year}`;
+        // تغییرات برای بازه سال
+        if (year.min) finalUrl += `&primary_release_date.gte=${year.min}-01-01`;
+        if (year.max) finalUrl += `&primary_release_date.lte=${year.max}-12-31`;
+        // ...
         if (language) finalUrl += `&with_original_language=${language}`;
       }
 
@@ -105,10 +112,7 @@ function App() {
 
       const filteredMovies = moviesData.filter((movie) => {
         if (imdbScore > 0) {
-          return (
-            movie.vote_average >= imdbScore - 0.5 &&
-            movie.vote_average <= imdbScore + 0.5
-          );
+          return movie.vote_average >= imdbScore;
         }
         return true;
       });
@@ -133,7 +137,7 @@ function App() {
                 genres={genres}
                 handleGenreChange={setGenre}
                 handleSortChange={setSort}
-                handleYearChange={setYear}
+                handleYearChange={handleYearChange}
                 handleMediaTypeChange={setMediaType}
                 handleLanguageChange={setLanguage}
                 handleImdbScoreChange={handleImdbScoreChange}

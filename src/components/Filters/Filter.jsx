@@ -62,19 +62,30 @@ const Filter = ({
         </select>
       </div>
 
-      {/* فیلتر سال */}
+      {/* فیلتر بازه سال */}
       <div className={styles.filterSection}>
         Year:
         <input
           className={styles.year}
-          name="year"
-          value={getState.year}
-          onChange={(e) => handleYearChange(e.target.value)}
+          name="yearFrom"
+          value={getState.year.min}
+          onChange={(e) => handleYearChange("min", e.target.value)}
           type="number"
           min="1900"
           max="2099"
           step="1"
-          placeholder="Year..."
+          placeholder="From..."
+        />
+        <input
+          className={styles.year}
+          name="yearTo"
+          value={getState.year.max}
+          onChange={(e) => handleYearChange("max", e.target.value)}
+          type="number"
+          min="1900"
+          max="2099"
+          step="1"
+          placeholder="To..."
         />
       </div>
 
@@ -109,7 +120,7 @@ const Filter = ({
 
       {/* فیلتر امتیاز IMDb (به صورت نمره دقیق) */}
       <div className={styles.filterSection}>
-        TMDb Score: {getState.imdbScore}
+        TMDb Score: {getState.imdbScore}+
         <input
           type="range"
           min="5"
