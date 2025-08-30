@@ -33,11 +33,13 @@ git clone https://github.com/m-rahmanzad/movie-finder-vite.git
 cd movie-finder-vite
 ```
 2.Install dependencies:
+
 ```
 npm install
 ```
 
 3.Create a .env file in the root directory with your TMDB API key:
+
 ```
 VITE_TMDB_API_KEY=your_api_key_here
 ```
