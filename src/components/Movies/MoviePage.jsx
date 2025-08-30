@@ -7,7 +7,7 @@ import background from "./background.jpg";
 import Nullimage from "./no-image.webp";
 import { findMovie, getRecommended, getCast } from "../../api";
 
-// helper functions
+// Helper functions
 function getClassByRate(vote) {
   if (vote >= 8) return "green";
   else if (vote >= 5) return "orange";
@@ -59,36 +59,103 @@ export default function MoviePage() {
     <div className={styles.container}>
       <div
         className={styles.background}
-        style={{ backgroundImage: `url(${checkBackdropExists(movie.backdrop_path)})` }}
+        style={{
+          backgroundImage: `url(${checkBackdropExists(movie.backdrop_path)})`,
+        }}
       ></div>
 
       <div className={styles.foreground}>
         <div className={styles.back}>
-          <button
+          <Link
             onClick={() => navigate(-1)}
-            style={{ background: "none", border: "none", cursor: "pointer" }}
+            style={{ textDecoration: "none" }}
+            to="#"
           >
             <i className="fas fa-arrow-left"></i> Go Back
-          </button>
+          </Link>
         </div>
 
         {movie && Object.keys(movie).length > 0 ? (
           <div className={styles.movieContainer}>
-            <a
-              href={`https://www.themoviedb.org/movie/${movie.id}`}
-              target="_blank"
-              rel="noreferrer"
-              style={{ textDecoration: "none" }}
-            >
-              <div className={styles.movie}>
-                <span className={cx(getClassByRate(movie.vote_average), styles.span)}>
-                  <i className="fas fa-star"></i> {movie.vote_average}
-                </span>
+            {/* Poster + Rating */}
+            <div className={styles.posterContainer}>
+              <span
+                className={cx(getClassByRate(movie.vote_average), styles.score)}
+              >
+                <i className="fas fa-star"></i> {movie.vote_average}
+              </span>
+              <img
+                className={styles.poster}
+                src={checkImageExists(movie.poster_path)}
+                alt={movie.title}
+              />
+            </div>
+
+            {/* Movie Details */}
+            <div className={styles.details}>
+              <h1 className={styles.title}>{movie.title}</h1>
+              <h4>
+                {movie.release_date ? movie.release_date : ""}{" "}
+                {movie.runtime ? `• ${movie.runtime}m` : ""}
+              </h4>
+              {/* overview */}
+              {movie.overview ? <h3>Overview:</h3> : ""}
+              <p className={styles.overview}>{movie.overview}</p>
+
+              <div className={styles.infoRow}>
+                <p className={styles.infoItem}>
+                  {<h3>Genre:</h3>}
+                  {movie.genres &&
+                    movie.genres.map((genre) => genre.name).join(", ")}
+                </p>
               </div>
-            </a>
+
+              {movie.imdb_id && (
+                <div>
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://www.imdb.com/title/${movie.imdb_id}`}
+                  >
+                    <img src={imdb} width="70" alt="imdb" />
+                  </a>
+                </div>
+              )}
+
+              <div className={styles.section}>
+                <h2>Cast</h2>
+                <div className={styles.castList}>
+                  {cast.slice(0, 5).map((actor) => (
+                    <div key={actor.id} className={styles.castMember}>
+                      <img
+                        src={checkImageExists(actor.profile_path)}
+                        alt={actor.name}
+                      />
+                      <p>{actor.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.section}>
+                <h2>You might also like...</h2>
+                <div className={styles.recommendedList}>
+                  {recommended.slice(0, 5).map((recMovie) => (
+                    <Link to={`/movie/${recMovie.id}`} key={recMovie.id}>
+                      <div className={styles.recommendedMovie}>
+                        <img
+                          src={checkImageExists(recMovie.poster_path)}
+                          alt={recMovie.title}
+                        />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
-          <div>Loading...</div> // یا هر چیز دیگری برای نمایش وضعیت بارگذاری
+          <div>Loading...</div>
         )}
       </div>
     </div>
