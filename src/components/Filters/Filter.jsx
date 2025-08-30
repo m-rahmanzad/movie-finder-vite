@@ -9,7 +9,7 @@ const Filter = ({
   handleMediaTypeChange,
   handleLanguageChange,
   handleImdbScoreChange,
-  getState
+  getState,
 }) => {
   return (
     <div id="filter" className={styles.toolbar}>
@@ -109,7 +109,7 @@ const Filter = ({
 
       {/* فیلتر امتیاز IMDb (به صورت نمره دقیق) */}
       <div className={styles.filterSection}>
-        IMDb Score: {getState.imdbScore}
+        TMDb Score: {getState.imdbScore}
         <input
           type="range"
           min="5"
