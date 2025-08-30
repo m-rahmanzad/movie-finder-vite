@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
-
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Header, Filter, Search, Movies, Footer, MoviePage } from "./components";
 import { getMovies, getGenres } from "./api";
-
-const DISCOVERSEARCH = "https://api.themoviedb.org/3/discover/movie?api_key=YOUR_API_KEY";
-const SEARCHAPI = "https://api.themoviedb.org/3/search/movie?&api_key=YOUR_API_KEY&query=";
 
 function MoviePageWrapper() {
   const { id } = useParams();
@@ -20,44 +16,119 @@ function App() {
   const [year, setYear] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [mediaType, setMediaType] = useState("movie");
+  const [language, setLanguage] = useState("");
+  const [imdbScore, setImdbScore] = useState(5);
+
+  const handleImdbScoreChange = (score) => {
+    setImdbScore(score);
+  };
+
+  const fetchMoreMovies = async () => {
+    try {
+      let nextPageUrl;
+      const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
+      if (search) {
+        nextPageUrl = `https://api.themoviedb.org/3/search/${mediaType}?api_key=${API_KEY}&query=${search}&page=${page + 1}`;
+      } else {
+        nextPageUrl = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${API_KEY}&page=${page + 1}`;
+        if (sort) nextPageUrl += `&sort_by=${sort}`;
+        if (genre) nextPageUrl += `&with_genres=${genre}`;
+        if (year) nextPageUrl += `&primary_release_year=${year}`;
+        if (language) nextPageUrl += `&with_original_language=${language}`;
+      }
+
+      const newMovies = await getMovies(nextPageUrl);
+      // نمایش مقدار imdbScore در کنسول
+      console.log("IMDb Score from Filter:", imdbScore);
+      const filteredNewMovies = newMovies.filter(movie => {
+        if (imdbScore > 0) {
+          return movie.vote_average >= imdbScore - 0.5 && movie.vote_average <= imdbScore + 0.5;
+        }
+        return true;
+      });
+      
+      if (filteredNewMovies.length > 0) {
+        setMovies(prevMovies => [...prevMovies, ...filteredNewMovies]);
+        setPage(prevPage => prevPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching more movies:", error);
+      setHasMore(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const moviesData = await getMovies(DISCOVERSEARCH);
       const genresData = await getGenres();
-      setMovies(moviesData);
       setGenres(genresData);
-      setHasMore(moviesData.length > 0);
     };
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const applyFilters = async () => {
+      const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+      let finalUrl;
+
+      if (search) {
+        finalUrl = `https://api.themoviedb.org/3/search/${mediaType}?api_key=${API_KEY}&query=${search}`;
+      } else {
+        finalUrl = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${API_KEY}`;
+        if (sort) finalUrl += `&sort_by=${sort}`;
+        if (genre) finalUrl += `&with_genres=${genre}`;
+        if (year) finalUrl += `&primary_release_year=${year}`;
+        if (language) finalUrl += `&with_original_language=${language}`;
+      }
+      
+      setPage(1);
+      const moviesData = await getMovies(finalUrl);
+      
+      const filteredMovies = moviesData.filter(movie => {
+          if (imdbScore > 0) {
+              return movie.vote_average >= imdbScore - 0.5 && movie.vote_average <= imdbScore + 0.5;
+          }
+          return true;
+      });
+      
+      setMovies(filteredMovies);
+      setHasMore(moviesData.length > 0);
+    };
+
+    applyFilters();
+  }, [sort, genre, year, search, mediaType, language, imdbScore]);
+
   return (
     <div>
       <Header />
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Search handleSearchChange={setSearch} />
-                <Filter
-                  genres={genres}
-                  handleGenreChange={setGenre}
-                  handleSortChange={setSort}
-                  handleYearChange={setYear}
-                  getState={{ movies, genre, sort, year, search }}
-                />
-                <Movies movies={movies} hasMore={hasMore} />
-              </>
-            }
-          />
-          <Route path="/movie/:id" element={<MoviePageWrapper />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Search handleSearchChange={setSearch} />
+              <Filter
+                genres={genres}
+                handleGenreChange={setGenre}
+                handleSortChange={setSort}
+                handleYearChange={setYear}
+                handleMediaTypeChange={setMediaType}
+                handleLanguageChange={setLanguage}
+                handleImdbScoreChange={handleImdbScoreChange}
+                getState={{ movies, genre, sort, year, search, mediaType, language, imdbScore }}
+              />
+              <Movies movies={movies} fetchMoreMovies={fetchMoreMovies} hasMore={hasMore} />
+            </>
+          }
+        />
+        <Route path="/movie/:id" element={<MoviePageWrapper />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
       <Footer />
     </div>
   );

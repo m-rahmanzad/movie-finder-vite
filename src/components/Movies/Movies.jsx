@@ -23,15 +23,15 @@ function checkImageExists(image) {
 	return Nullimage;
 }
 
-
-const Movies = ({ movies, fetchMoreMovies, hasmore }) => {
+// اضافه کردن fetchMoreMovies به props
+const Movies = ({ movies, fetchMoreMovies, hasMore }) => {
 	document.title = `Z-Flix`;
 	return (
 		<div>
 			{movies && movies.length !== 0 ? (
 				<InfiniteScroll
-					loadMore={fetchMoreMovies}
-					hasMore={hasmore}
+					loadMore={fetchMoreMovies} // اینجا از prop به نام fetchMoreMovies استفاده شده
+					hasMore={hasMore} // اینجا هم نام prop به درستی نوشته شده
 					initialLoad={false}
 					useWindow={true}
 					loader={
@@ -52,7 +52,7 @@ const Movies = ({ movies, fetchMoreMovies, hasmore }) => {
 									<div className={styles.movieinfo}>
 										<h3>{movie.title}</h3>
 										<p className={styles.year}>
-											<b> 
+											<b> 
 												{movie.release_date ? movie.release_date.slice(0, movie.release_date.indexOf("-")) : "No Date"}
 											</b>
 										</p>

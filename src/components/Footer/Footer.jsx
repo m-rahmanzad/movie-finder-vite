@@ -7,12 +7,12 @@ const Footer = () => {
     return (
         <footer id="footer" className={styles.footer}>
             <p>
-                Made with ❤ by
+                Made with ❤ by &nbsp;
                 <a
-                    href="https://github.com/seyon123"
+                    href="https://github.com/m-rahmanzad"
                     target="_blank"
                     rel="noopener noreferrer"
-                > Seyon Rajagopal </a>
+                >   Seyon Rajagopal & mosi </a>
                 <br/>
                 Powered by: <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer"><img height="14"src={tmdb} alt="The Movie DB (TMDB)"></img></a>
 

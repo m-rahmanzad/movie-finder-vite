@@ -1,78 +1,60 @@
-import axios from "axios";
+// src/api/index.js
+import axios from 'axios';
 
-const GENRESAPI =
-	"https://api.themoviedb.org/3/genre/movie/list?api_key=4c21fe23aacca51dc8af4c5d5e8eb2d4&language=en-US";
+// خواندن کلید API از فایل .env
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const BASE_URL = "https://api.themoviedb.org/3";
+
+export const DISCOVERSEARCH = `${BASE_URL}/discover/movie?api_key=${API_KEY}`;
+export const SEARCHAPI = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=`;
 
 
-    export const getMovies = async (url) => {
-	try {
-		const {
-			data: { results },
-		} = await axios.get(url);
-		return results;
-	} catch (error) {
-		return error;
-	}
+export const getMovies = async (url) => {
+  try {
+    const res = await axios.get(url);
+    return res.data.results;
+  } catch (err) {
+    console.error("Error fetching movies:", err);
+    return [];
+  }
 };
 
 export const getGenres = async () => {
-	try {
-		const {
-			data: { genres },
-		} = await axios.get(GENRESAPI);
-		return genres;
-	} catch (error) {
-		return error;
-	}
-};
-
-export const findGenre = async (id) => {
-	try {
-		const {
-			data: { genres },
-		} = await axios.get(GENRESAPI);
-
-		for (let i = 0; i <= genres.length; i++) {
-			if (id === genres[i].id) {
-				return genres[i].name;
-			} else {
-				return "No Genre";
-			}
-		}
-	} catch (error) {
-		return error;
-	}
+  try {
+    const res = await axios.get(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
+    return res.data.genres;
+  } catch (err) {
+    console.error("Error fetching genres:", err);
+    return [];
+  }
 };
 
 export const findMovie = async (id) => {
-	try {
-		const { data } = await axios.get(
-			`https://api.themoviedb.org/3/movie/${id}?api_key=a18a4c3abe6c63b9d003880cedebf790&language=en-US`
-		);
-		return data;
-	} catch (error) {
-		return error;
-	}
+  try {
+    const res = await axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching movie:", err);
+    return {};
+  }
 };
 
 export const getRecommended = async (id) => {
-	try {
-		const { data: { results } } = await axios.get(
-			`https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=a18a4c3abe6c63b9d003880cedebf790&language=en-US&page=1`
-		);
-		return results;
-	} catch (error) {
-		return error;
-	}
+  try {
+    const res = await axios.get(`${BASE_URL}/movie/${id}/recommendations?api_key=${API_KEY}`);
+    return res.data.results;
+  } catch (err) {
+    console.error("Error fetching recommended movies:", err);
+    return [];
+  }
 };
 
 export const getCast = async (id) => {
-	try {
-		const { data: { cast } } = await axios.get(
-			`https://api.themoviedb.org/3/movie/${id}/casts?api_key=a18a4c3abe6c63b9d003880cedebf790`
-		);
-		return cast;
-	} catch (error) {
-		return error;
-	}
+  try {
+    const res = await axios.get(`${BASE_URL}/movie/${id}/credits?api_key=${API_KEY}`);
+    return res.data.cast;
+  } catch (err) {
+    console.error("Error fetching cast:", err);
+    return [];
+  }
 };
