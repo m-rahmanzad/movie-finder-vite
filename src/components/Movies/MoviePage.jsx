@@ -28,6 +28,7 @@ export default function MoviePage() {
   const [movie, setMovie] = useState({});
   const [recommended, setRecommended] = useState([]);
   const [cast, setCast] = useState([]);
+  const [imdbRating, setImdbRating] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -40,6 +41,23 @@ export default function MoviePage() {
       setCast(castData);
 
       document.title = `${movieData.title || "Invalid Movie"} | Z-Flix`;
+
+      // 👇 گرفتن IMDB Rating از OMDB API
+      if (movieData.imdb_id) {
+        try {
+          const response = await fetch(
+            `https://www.omdbapi.com/?i=${movieData.imdb_id}&apikey=${
+              import.meta.env.VITE_OMDB_API_KEY
+            }`
+          );
+          const omdbData = await response.json();
+          if (omdbData.imdbRating && omdbData.imdbRating !== "N/A") {
+            setImdbRating(omdbData.imdbRating);
+          }
+        } catch (error) {
+          console.error("Error fetching IMDb rating:", error);
+        }
+      }
 
       window.onfocus = () => {
         document.title = `${movieData.title || "Invalid Movie"} | Z-Flix`;
@@ -79,11 +97,6 @@ export default function MoviePage() {
           <div className={styles.movieContainer}>
             {/* Poster + Rating */}
             <div className={styles.posterContainer}>
-              <span
-                className={cx(getClassByRate(movie.vote_average), styles.score)}
-              >
-                <i className="fas fa-star"></i> {movie.vote_average}
-              </span>
               <img
                 className={styles.poster}
                 src={checkImageExists(movie.poster_path)}
@@ -103,15 +116,15 @@ export default function MoviePage() {
               <p className={styles.overview}>{movie.overview}</p>
 
               <div className={styles.infoRow}>
+                {<h3>Genre:</h3>}
                 <p className={styles.infoItem}>
-                  {<h3>Genre:</h3>}
                   {movie.genres &&
                     movie.genres.map((genre) => genre.name).join(", ")}
                 </p>
               </div>
 
               {movie.imdb_id && (
-                <div>
+                <div className={styles.imdbContainer}>
                   <a
                     target="_blank"
                     rel="noreferrer"
@@ -119,6 +132,11 @@ export default function MoviePage() {
                   >
                     <img src={imdb} width="70" alt="imdb" />
                   </a>
+                  {imdbRating && (
+                    <span className={styles.imdbRatingText}>
+                      <strong>&nbsp;Rating:</strong> {imdbRating} ⭐
+                    </span>
+                  )}
                 </div>
               )}
 

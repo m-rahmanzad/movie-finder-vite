@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
-import { Header, Filter, Search, Movies, Footer, MoviePage } from "./components";
+import {
+  Header,
+  Filter,
+  Search,
+  Movies,
+  Footer,
+  MoviePage,
+} from "./components";
 import { getMovies, getGenres } from "./api";
 
 function MoviePageWrapper() {
@@ -31,9 +38,13 @@ function App() {
       const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
       if (search) {
-        nextPageUrl = `https://api.themoviedb.org/3/search/${mediaType}?api_key=${API_KEY}&query=${search}&page=${page + 1}`;
+        nextPageUrl = `https://api.themoviedb.org/3/search/${mediaType}?api_key=${API_KEY}&query=${search}&page=${
+          page + 1
+        }`;
       } else {
-        nextPageUrl = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${API_KEY}&page=${page + 1}`;
+        nextPageUrl = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${API_KEY}&page=${
+          page + 1
+        }`;
         if (sort) nextPageUrl += `&sort_by=${sort}`;
         if (genre) nextPageUrl += `&with_genres=${genre}`;
         if (year) nextPageUrl += `&primary_release_year=${year}`;
@@ -43,16 +54,19 @@ function App() {
       const newMovies = await getMovies(nextPageUrl);
       // نمایش مقدار imdbScore در کنسول
       console.log("IMDb Score from Filter:", imdbScore);
-      const filteredNewMovies = newMovies.filter(movie => {
+      const filteredNewMovies = newMovies.filter((movie) => {
         if (imdbScore > 0) {
-          return movie.vote_average >= imdbScore - 0.5 && movie.vote_average <= imdbScore + 0.5;
+          return (
+            movie.vote_average >= imdbScore - 0.5 &&
+            movie.vote_average <= imdbScore + 0.5
+          );
         }
         return true;
       });
-      
+
       if (filteredNewMovies.length > 0) {
-        setMovies(prevMovies => [...prevMovies, ...filteredNewMovies]);
-        setPage(prevPage => prevPage + 1);
+        setMovies((prevMovies) => [...prevMovies, ...filteredNewMovies]);
+        setPage((prevPage) => prevPage + 1);
         setHasMore(true);
       } else {
         setHasMore(false);
@@ -85,17 +99,20 @@ function App() {
         if (year) finalUrl += `&primary_release_year=${year}`;
         if (language) finalUrl += `&with_original_language=${language}`;
       }
-      
+
       setPage(1);
       const moviesData = await getMovies(finalUrl);
-      
-      const filteredMovies = moviesData.filter(movie => {
-          if (imdbScore > 0) {
-              return movie.vote_average >= imdbScore - 0.5 && movie.vote_average <= imdbScore + 0.5;
-          }
-          return true;
+
+      const filteredMovies = moviesData.filter((movie) => {
+        if (imdbScore > 0) {
+          return (
+            movie.vote_average >= imdbScore - 0.5 &&
+            movie.vote_average <= imdbScore + 0.5
+          );
+        }
+        return true;
       });
-      
+
       setMovies(filteredMovies);
       setHasMore(moviesData.length > 0);
     };
@@ -120,9 +137,22 @@ function App() {
                 handleMediaTypeChange={setMediaType}
                 handleLanguageChange={setLanguage}
                 handleImdbScoreChange={handleImdbScoreChange}
-                getState={{ movies, genre, sort, year, search, mediaType, language, imdbScore }}
+                getState={{
+                  movies,
+                  genre,
+                  sort,
+                  year,
+                  search,
+                  mediaType,
+                  language,
+                  imdbScore,
+                }}
               />
-              <Movies movies={movies} fetchMoreMovies={fetchMoreMovies} hasMore={hasMore} />
+              <Movies
+                movies={movies}
+                fetchMoreMovies={fetchMoreMovies}
+                hasMore={hasMore}
+              />
             </>
           }
         />
