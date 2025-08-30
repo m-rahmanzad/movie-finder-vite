@@ -60,6 +60,9 @@
   margin-top: 50px;
   z-index: 5;
   padding: 0 20px;
+  max-width: 1200px;
+  margin: 50px auto;
+  align-items: flex-start; /* این خط اضافه شد تا المنت‌ها از بالا شروع شوند */
 }
 
 .posterContainer {
@@ -69,19 +72,28 @@
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+
+  /* اصلاحات مهم */
+  display: flex; /* برای هماهنگی با flexbox والد */
+  flex-direction: column; /* اگر نیاز به المان‌های زیر هم داشتین */
 }
 
 .poster {
   width: 100%;
   height: auto;
-  object-fit: cover;
   display: block;
+
+  /* اصلاح مهم */
+  object-fit: cover; /* تصویر کل کانتینر را پر می‌کند و فضای خالی باقی نمی‌گذارد */
 }
 
 .details {
   padding: 0 30px;
   max-width: 700px;
   color: var(--head-light);
+  min-height: 450px; /* این خط اضافه شد تا ارتفاع با پوستر هماهنگ شود */
+  display: flex; /* اضافه شده برای کنترل چیدمان داخلی */
+  flex-direction: column; /* اضافه شده */
 }
 
 .title {

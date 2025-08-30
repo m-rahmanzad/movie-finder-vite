@@ -5,7 +5,7 @@ import cx from "classnames";
 import imdb from "./imdb.png";
 import background from "./background.jpg";
 import Nullimage from "./no-image.webp";
-import { findMovie, getRecommended, getCast } from "../../api";
+import { findMovie, getRecommended, getCast, getImdbRating } from "../../api";
 
 // Helper functions
 function getClassByRate(vote) {
@@ -32,9 +32,11 @@ export default function MoviePage() {
 
   useEffect(() => {
     async function fetchData() {
-      const movieData = await findMovie(id);
-      const recommendedData = await getRecommended(id);
-      const castData = await getCast(id);
+      const [movieData, recommendedData, castData] = await Promise.all([
+        findMovie(id),
+        getRecommended(id),
+        getCast(id),
+      ]);
 
       setMovie(movieData);
       setRecommended(recommendedData);
@@ -42,7 +44,6 @@ export default function MoviePage() {
 
       document.title = `${movieData.title || "Invalid Movie"} | Z-Flix`;
 
-      // 👇 گرفتن IMDB Rating از OMDB API
       if (movieData.imdb_id) {
         try {
           const response = await fetch(
@@ -140,36 +141,42 @@ export default function MoviePage() {
                 </div>
               )}
 
-              <div className={styles.section}>
-                <h2>Cast</h2>
-                <div className={styles.castList}>
-                  {cast.slice(0, 5).map((actor) => (
-                    <div key={actor.id} className={styles.castMember}>
-                      <img
-                        src={checkImageExists(actor.profile_path)}
-                        alt={actor.name}
-                      />
-                      <p>{actor.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.section}>
-                <h2>You might also like...</h2>
-                <div className={styles.recommendedList}>
-                  {recommended.slice(0, 5).map((recMovie) => (
-                    <Link to={`/movie/${recMovie.id}`} key={recMovie.id}>
-                      <div className={styles.recommendedMovie}>
+              {/* نمایش بخش Cast فقط در صورت وجود داده */}
+              {cast.length > 0 && (
+                <div className={styles.section}>
+                  <h2>Cast</h2>
+                  <div className={styles.castList}>
+                    {cast.slice(0, 5).map((actor) => (
+                      <div key={actor.id} className={styles.castMember}>
                         <img
-                          src={checkImageExists(recMovie.poster_path)}
-                          alt={recMovie.title}
+                          src={checkImageExists(actor.profile_path)}
+                          alt={actor.name}
                         />
+                        <p>{actor.name}</p>
                       </div>
-                    </Link>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* نمایش بخش Recommended فقط در صورت وجود داده */}
+              {recommended.length > 0 && (
+                <div className={styles.section}>
+                  <h2>You might also like...</h2>
+                  <div className={styles.recommendedList}>
+                    {recommended.slice(0, 5).map((recMovie) => (
+                      <Link to={`/movie/${recMovie.id}`} key={recMovie.id}>
+                        <div className={styles.recommendedMovie}>
+                          <img
+                            src={checkImageExists(recMovie.poster_path)}
+                            alt={recMovie.title}
+                          />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ) : (
