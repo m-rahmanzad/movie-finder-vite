@@ -17,11 +17,17 @@ I modified from this source https://github.com/seyon123/movie-finder and add som
 ###Features
 
 🔍 Search movies by title.
+
 🎬 View detailed movie information (poster, overview, genres, runtime, release date).
+
 ⭐ Display movie ratings with colored indicators based on scores.
+
 👥 Explore main cast with profile pictures and character names.
+
 🎯 Discover recommended movies based on the selected movie.
+
 🌐 Direct links to TMDB and IMDb pages
+
 🔄 Responsive design for desktop and mobile screens.
 
 -----------
