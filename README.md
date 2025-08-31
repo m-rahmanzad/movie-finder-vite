@@ -1,20 +1,21 @@
-#Movie Finder App
+# Movie Finder App
 
 Z-Flix is a modern React + Vite movie discovery web app that allows users to search for movies, view details, explore cast members, and discover recommended films. Data is fetched from The Movie Database (TMDB) API.
 I modified from this source https://github.com/seyon123/movie-finder and add some filter and update libraries 
 
 ------------
 
-**Table of Contents**
+# Table of Contents
 
-[TOCM]
-
-[TOC]
+- [Installation](#Installation)
+- [Folder Structure](#Folder_Structure)
+- [Contributing](#Contributing)
+- [License](#license)
 
 ------------
 
 
-###Features
+### Features
 
 🔍 Search movies by title.
 
@@ -31,11 +32,11 @@ I modified from this source https://github.com/seyon123/movie-finder and add som
 🔄 Responsive design for desktop and mobile screens.
 
 -----------
-###Screenshots
+### Screenshots
 <img width="1166" height="653" alt="image" src="https://github.com/user-attachments/assets/93e66264-f5a2-4d7c-88f2-dcfb2ab8b989" />
 
 ------------
-###Technologies Used
+### Technologies Used
 - React – Front-end library for building UI.
 - Vite – Fast build tool and development server.
 - React Router – For navigation between pages.
