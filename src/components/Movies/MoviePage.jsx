@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import styles from "./MoviePage.module.css";
-import cx from "classnames";
 import imdb from "./imdb.png";
 import background from "./background.jpg";
 import Nullimage from "./no-image.webp";
-import { findMovie, getRecommended, getCast, getImdbRating } from "../../api";
+import { findMovie, getRecommended, getCast, getExtraRatings } from "../../api";
 
 // Helper functions
 function getClassByRate(vote) {
@@ -28,7 +27,7 @@ export default function MoviePage() {
   const [movie, setMovie] = useState({});
   const [recommended, setRecommended] = useState([]);
   const [cast, setCast] = useState([]);
-  const [imdbRating, setImdbRating] = useState(null);
+  const [ratings, setRatings] = useState({ imdb: null, rottenTomatoes: null });
 
   useEffect(() => {
     async function fetchData() {
@@ -44,22 +43,13 @@ export default function MoviePage() {
 
       document.title = `${movieData.title || "Invalid Movie"} | Z-Flix`;
 
-      if (movieData.imdb_id) {
-        try {
-          const response = await fetch(
-            `https://www.omdbapi.com/?i=${movieData.imdb_id}&apikey=${
-              import.meta.env.VITE_OMDB_API_KEY
-            }`
-          );
-          const omdbData = await response.json();
-          if (omdbData.imdbRating && omdbData.imdbRating !== "N/A") {
-            setImdbRating(omdbData.imdbRating);
-          }
-        } catch (error) {
-          console.error("Error fetching IMDb rating:", error);
-        }
+      // گرفتن امتیازها (IMDb + Rotten Tomatoes)
+      const extraRatings = await getExtraRatings(id);
+      if (extraRatings) {
+        setRatings(extraRatings);
       }
 
+      // تغییر عنوان تب
       window.onfocus = () => {
         document.title = `${movieData.title || "Invalid Movie"} | Z-Flix`;
       };
@@ -96,7 +86,7 @@ export default function MoviePage() {
 
         {movie && Object.keys(movie).length > 0 ? (
           <div className={styles.movieContainer}>
-            {/* Poster + Rating */}
+            {/* Poster */}
             <div className={styles.posterContainer}>
               <img
                 className={styles.poster}
@@ -112,18 +102,19 @@ export default function MoviePage() {
                 {movie.release_date ? movie.release_date : ""}{" "}
                 {movie.runtime ? `• ${movie.runtime}m` : ""}
               </h4>
-              {/* overview */}
+
               {movie.overview ? <h3>Overview:</h3> : ""}
               <p className={styles.overview}>{movie.overview}</p>
 
               <div className={styles.infoRow}>
-                {<h3>Genre:</h3>}
+                <h3>Genre:</h3>
                 <p className={styles.infoItem}>
                   {movie.genres &&
                     movie.genres.map((genre) => genre.name).join(", ")}
                 </p>
               </div>
 
+              {/* IMDb + Rotten Tomatoes */}
               {movie.imdb_id && (
                 <div className={styles.imdbContainer}>
                   <a
@@ -133,15 +124,23 @@ export default function MoviePage() {
                   >
                     <img src={imdb} width="70" alt="imdb" />
                   </a>
-                  {imdbRating && (
+                  {ratings.imdb && (
                     <span className={styles.imdbRatingText}>
-                      <strong>&nbsp;Rating:</strong> {imdbRating} ⭐
+                      <strong>&nbsp;IMDb:</strong> {ratings.imdb} ⭐
+                    </span>
+                  )}
+                  <br></br>
+                  <br></br>
+                  {ratings.rottenTomatoes && (
+                    <span className={styles.imdbRatingText}>
+                      <strong>&nbsp;Rotten Tomatoes:</strong>{" "}
+                      {ratings.rottenTomatoes} 🍅
                     </span>
                   )}
                 </div>
               )}
 
-              {/* نمایش بخش Cast فقط در صورت وجود داده */}
+              {/* Cast */}
               {cast.length > 0 && (
                 <div className={styles.section}>
                   <h2>Cast</h2>
@@ -159,7 +158,7 @@ export default function MoviePage() {
                 </div>
               )}
 
-              {/* نمایش بخش Recommended فقط در صورت وجود داده */}
+              {/* Recommended Movies */}
               {recommended.length > 0 && (
                 <div className={styles.section}>
                   <h2>You might also like...</h2>
