@@ -4,23 +4,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   width: 100%;
-  position: relative; /* اضافه شده برای والد background */
-}
-
-.background {
-  background-size: cover;
-  background-position: 50% 50%;
-  position: absolute; /* از fixed به absolute تغییر یافت */
-  top: 0;
-  filter: var(--filter);
-  width: 100%;
-  height: 100%;
-  z-index: 4;
-}
-
-.foreground {
-  z-index: 5;
+  position: relative;
 }
 
 .back {
@@ -30,8 +16,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--dark);
 }
+
 .back button {
   color: var(--white); /* متن دکمه سفید می‌شود */
   background: none;
@@ -59,8 +45,7 @@
   -webkit-transform: scale(1.12);
   transform: scale(1.12);
 }
-
-.movieContainer {
+.actorContainer {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -69,60 +54,47 @@
   padding: 0 20px;
   max-width: 1200px;
   margin: 50px auto;
-  align-items: flex-start; /* این خط اضافه شد تا المنت‌ها از بالا شروع شوند */
+  align-items: flex-start;
 }
 
-.posterContainer {
+.profileContainer {
   margin: 20px;
   max-width: 300px;
   min-width: 150px;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
-
-  /* اصلاحات مهم */
-  display: flex; /* برای هماهنگی با flexbox والد */
-  flex-direction: column; /* اگر نیاز به المان‌های زیر هم داشتین */
+  display: flex;
+  flex-direction: column;
 }
 
-.poster {
+.profile {
   width: 100%;
   height: auto;
   display: block;
-
-  /* اصلاح مهم */
-  object-fit: cover; /* تصویر کل کانتینر را پر می‌کند و فضای خالی باقی نمی‌گذارد */
+  object-fit: cover;
+  border-radius: 15px;
 }
 
 .details {
   padding: 0 30px;
   max-width: 700px;
   color: var(--head-light);
-  min-height: 450px; /* این خط اضافه شد تا ارتفاع با پوستر هماهنگ شود */
-  display: flex; /* اضافه شده برای کنترل چیدمان داخلی */
-  flex-direction: column; /* اضافه شده */
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
 }
 
-.title {
+.name {
   margin-top: 0;
   font-size: 2.5em;
   color: var(--white);
 }
 
-.imdbScore {
-  display: flex;
-  align-items: center;
-  color: #ebd27a;
-  font-weight: bold;
-}
-
-.imdbIcon {
-  height: 20px;
-  margin-right: 5px;
-}
-
-.overview {
+.biography {
   line-height: 1.6;
+  margin-top: 10px;
+  color: var(--head-light);
 }
 
 .infoRow {
@@ -136,22 +108,11 @@
   color: var(--head-light);
 }
 
-.castOuter {
-  margin-top: 100px;
-  color: var(--head-light);
-}
-
 .recommendedOuter {
   color: var(--head-light);
 }
 
-.castTitle {
-  margin: 20px;
-  font-size: 1.4em;
-}
-
-.recommendedContainer,
-.castContainer {
+.recommendedContainer {
   display: flex;
   justify-content: space-between;
   max-width: calc(100vw - 10px);
@@ -159,43 +120,15 @@
   overflow-y: hidden;
 }
 
-.character {
-  color: var(--light-purple) !important;
-}
-
-.recommendedMovie,
-.castMember {
+.recommendedMovie {
   margin: 20px;
   width: 150px;
   height: max-content;
   transition: all ease-in-out 100ms;
 }
 
-.recommendedMovie:hover,
-.castMember:hover,
-.movie:hover {
+.recommendedMovie:hover {
   transform: scale(1.1);
-}
-
-.castMember img {
-  height: 150px;
-  width: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.castMember h3 {
-  text-decoration: none;
-  text-align: center;
-  color: var(--head-light);
-  font-size: 0.9em;
-  width: 100%;
-}
-
-.castMember p {
-  font-size: 0.9em;
-  color: var(--light-purple);
-  margin-top: 5px;
 }
 
 .recommendedMovie img {
@@ -215,13 +148,13 @@
 }
 
 @media screen and (max-width: 768px) {
-  .movieContainer {
+  .actorContainer {
     flex-direction: column;
     align-items: center;
     max-width: none;
     margin: 50px 0;
   }
-  .posterContainer {
+  .profileContainer {
     max-width: 250px;
     margin: 20px 0;
   }
@@ -229,18 +162,11 @@
     padding: 0 15px;
     text-align: center;
   }
-  .title {
+  .name {
     font-size: 2em;
-  }
-  .scoreContainer {
-    justify-content: center;
   }
   .infoRow {
     flex-direction: column;
     align-items: center;
-  }
-  .castList,
-  .recommendedList {
-    justify-content: flex-start;
   }
 }

@@ -75,13 +75,9 @@ export default function MoviePage() {
 
       <div className={styles.foreground}>
         <div className={styles.back}>
-          <Link
-            onClick={() => navigate(-1)}
-            style={{ textDecoration: "none" }}
-            to="#"
-          >
+          <button onClick={() => navigate(-1)}>
             <i className="fas fa-arrow-left"></i> Go Back
-          </Link>
+          </button>
         </div>
 
         {movie && Object.keys(movie).length > 0 ? (
@@ -125,12 +121,11 @@ export default function MoviePage() {
                     <img src={imdb} width="70" alt="imdb" />
                   </a>
                   {ratings.imdb && (
-                    <span className={styles.imdbRatingText}>
-                      <strong>&nbsp;IMDb:</strong> {ratings.imdb} ⭐
+                    <span className={styles.imdbScore}>
+                      <strong>&nbsp;IMDb Rate:</strong> {ratings.imdb} ⭐
                     </span>
                   )}
-                  <br></br>
-                  <br></br>
+
                   {ratings.rottenTomatoes && (
                     <span className={styles.imdbRatingText}>
                       <strong>&nbsp;Rotten Tomatoes:</strong>{" "}
@@ -139,48 +134,66 @@ export default function MoviePage() {
                   )}
                 </div>
               )}
-
-              {/* Cast */}
-              {cast.length > 0 && (
-                <div className={styles.section}>
-                  <h2>Cast</h2>
-                  <div className={styles.castList}>
-                    {cast.slice(0, 5).map((actor) => (
-                      <div key={actor.id} className={styles.castMember}>
-                        <img
-                          src={checkImageExists(actor.profile_path)}
-                          alt={actor.name}
-                        />
-                        <p>{actor.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recommended Movies */}
-              {recommended.length > 0 && (
-                <div className={styles.section}>
-                  <h2>You might also like...</h2>
-                  <div className={styles.recommendedList}>
-                    {recommended.slice(0, 5).map((recMovie) => (
-                      <Link to={`/movie/${recMovie.id}`} key={recMovie.id}>
-                        <div className={styles.recommendedMovie}>
-                          <img
-                            src={checkImageExists(recMovie.poster_path)}
-                            alt={recMovie.title}
-                          />
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         ) : (
           <div>Loading...</div>
         )}
+        {/* Cast */}
+        <div className={styles.castOuter}>
+          {cast && cast.length > 0 && (
+            <h3 className={styles.castTitle}>Cast:</h3>
+          )}
+          <div className={styles.castContainer}>
+            {cast &&
+              cast.length > 0 &&
+              cast.slice(0, 8).map((member, i) => (
+                <Link
+                  key={member.id}
+                  to={`/actor/${member.id}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <div
+                    alt={member.name}
+                    title={member.name}
+                    className={styles.castMember}
+                  >
+                    <img
+                      className={styles.poster}
+                      src={checkImageExists(member.profile_path)}
+                      alt={member.name}
+                    />
+                    <div className={styles.movieinfo}>
+                      <h3>{member.name}</h3>
+                      <h3 className={styles.character}>{member.character}</h3>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </div>
+
+        {/* Recommended Movies */}
+        <div className={styles.recommendedOuter}>
+          <h3>Recommended:</h3>
+          {recommended.length > 0 && (
+            <div className={styles.recommendedContainer}>
+              {recommended.slice(0, 8).map((recMovie) => (
+                <Link to={`/movie/${recMovie.id}`} key={recMovie.id}>
+                  <div className={styles.recommendedMovie}>
+                    <img
+                      src={checkImageExists(recMovie.poster_path)}
+                      alt={recMovie.title}
+                    />
+                    <div className={styles.recommendedMovie}>
+                      <h3>{recMovie.title}</h3>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ActorPage from "./components/Actors/ActorPage";
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import {
   Header,
@@ -161,6 +162,7 @@ function App() {
           }
         />
         <Route path="/movie/:id" element={<MoviePageWrapper />} />
+        <Route path="/actor/:id" element={<ActorPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
